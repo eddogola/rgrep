@@ -21,6 +21,10 @@ impl<'a> Config<'a> {
 pub fn run(config: &Config) -> Result<(), Box<dyn Error>> {
     let content = fs::read_to_string(config.filename)?;
 
+    for line in search(config.query, &content) {
+        println!("{}", line);
+    }
+
     Ok(())
 }
 
