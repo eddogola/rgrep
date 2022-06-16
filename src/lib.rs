@@ -41,21 +41,14 @@ pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
 }
 
 pub fn search_case_insensitive<'a>(query: &str, contents:&'a str) -> Vec<&'a str> {
-    let (query_lower, contents_lower) = (query.to_lowercase(), contents.to_lowercase());
-    
     // got an error referencing above variables to use in search
     // so I'm going to write a replica of search to get the test to pass
     // then refactor later
-    let contents: Vec<&str> = contents.lines().collect();
     let mut results = Vec::new();
-    let mut index = 0;
-    for line in contents_lower.lines() {
-        if line.contains(&query_lower) {
-            // results.push(String::from(line));
-            println!("{}", index);
-            results.push(contents[index]);
+    for line in contents.lines() {
+        if line.to_lowercase().contains(&query.to_lowercase()) {
+            results.push(line);
         }
-        index += 1;
     }
 
     results
