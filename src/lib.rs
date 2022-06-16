@@ -4,16 +4,18 @@ use std::error::Error;
 pub struct Config<'a> {
     pub query: &'a str,
     pub filename: &'a str,
+    pub case_sensitive: bool,
 }
 
 impl<'a> Config<'a> {
-    pub fn new(args: &[String]) -> Result<Config, &str> {
+    pub fn new(args: &[String], case_sensitive: bool) -> Result<Config, &str> {
         if args.len() < 3 {
             return Err("insufficient arguments supplied");
         }
         Ok(Config {
             query: &args[1],
             filename: &args[2],
+            case_sensitive,
         })
     }
 }
@@ -21,7 +23,13 @@ impl<'a> Config<'a> {
 pub fn run(config: &Config) -> Result<(), Box<dyn Error>> {
     let content = fs::read_to_string(config.filename)?;
 
-    for line in search(config.query, &content) {
+    let results = if config.case_sensitive {
+        search(config.query, &content)
+    } else {
+        search_case_insensitive(config.query, &content)
+    };
+    
+    for line in results {
         println!("{}", line);
     }
 
