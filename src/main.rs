@@ -3,11 +3,15 @@ use std::process;
 
 use rgrep::Config;
 
-fn main() {
-    let args: Vec<String> = env::args().collect();
+const CASE_SENSITIVE_VAR: &'static str = "CASE_INSENSITIVE";
 
-    let config = Config::new(&args).unwrap_or_else(|error| {
-        println!("Problem parsing arguments: {}", error);
+fn main() {
+    // get config values
+    let args: Vec<String> = env::args().collect();
+    let case_sensitive = env::var(CASE_SENSITIVE_VAR).is_err();
+
+    let config = Config::new(&args, case_sensitive).unwrap_or_else(|error| {
+        eprintln!("Problem parsing arguments: {}", error);
         process::exit(1);
     });
 
@@ -15,7 +19,7 @@ fn main() {
     println!("In file: {}", config.filename);
 
     if let Err(e) = rgrep::run(&config) {
-        println!("Application error: {}", e);
+        eprintln!("Application error: {}", e);
         process::exit(1);
     }
 }
